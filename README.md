@@ -1,6 +1,14 @@
 # spatial-organization-patterns-related-to-magdalenian-cave-art
 This repository contains the codes from DOI: https://doi.org/10.1007/s12520-024-02007-3.
 
+#   Author: Iñaki Intxaurbe Alberdi 
+#   Department of Graphic Design and Engineering Projects
+#   (Universidad del País Vasco/Euskal Herriko Unibertsitatea)
+#   PACEA UMR 5199
+#   (Université du Bordeaux)
+#   Date: 2024-06-15
+#   Copyright (C) 2024  Iñaki Intxaurbe
+
 First, in the "0 DATA" folder, you can find an .xlsx file containing the iconographic data for the graphic units (GU) analysed in this study. This table summarises the database created for analysis. The photogrammetric files for each GU could not be included in this repository due to the large volume of data. The models of the GUs are essential for the "Script.py" code in the next folder ("1 GIS") to function properly. These photogrammetric models were made in standard files (.obj for the 3D model, .tif for the texture, and .mtl for the mapping), and were archived after being georeferenced using common markers with the cave's point cloud. Later, the 3D model (.obj) for each GU was converted to a .wrl file, so that they could be processed through ArcGIS.
 
 
