@@ -123,32 +123,40 @@ if (length(gu_aukeratu) == 0) {
 }
 
 # ----------------------------
-# 9) Plot bakarra (GU batzuk + koben zentroidiak)
+# 9) Aldagaien koordenatuak (FAMD)
 # ----------------------------
 
-# paleta (zurea)
+var_coord <- as.data.frame(res.famd$var$coord[, 1:2])
+var_coord$Aldagaia <- rownames(var_coord)
+
+# Guk interesatzen zaizkigunak bakarrik
+var_sel <- var_coord %>%
+  dplyr::filter(Aldagaia %in% c("DifVal"))
+
+# ----------------------------
+# 10) Plot bakarra (GU batzuk + koben zentroidiak + Zailtasun aldagaia)
+# ----------------------------
+
+# Kolore kolore ta gustu guztiak ...
 pal <- c("#0073C2FF", "#EFC000FF", "#868686FF", "#CD534CFF")
 
 p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
   geom_point(size = 1.2, alpha = 0.6) +
   
-  # 2 sigmako probabilidadia (~95.45%)
+  # 2 sigmako elipseak
   stat_ellipse(aes(fill = cluster), geom = "polygon",
                level = 0.9545, alpha = 0.12, color = NA) +
   stat_ellipse(level = 0.9545, linewidth = 0.6) +
   
-  # GU batzuk bakarrik (label_GU == NA => ez du ezer idatziko)
+  # GU batzuk bakarrik
   ggrepel::geom_text_repel(
     aes(label = label_GU),
     size = 3,
-    max.overlaps = Inf,
-    box.padding = 0.25,
-    point.padding = 0.15,
     na.rm = TRUE,
     show.legend = FALSE
   ) +
   
-  # koben zentroidiak (zuri-beltz puntua)
+  # koben zentroidiak
   geom_point(
     data = cent_cueva,
     aes(Dim1, Dim2),
@@ -165,8 +173,25 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
     inherit.aes = FALSE,
     size = 4,
     fontface = "bold",
-    color = "black",
-    box.padding = 0.35
+    color = "black"
+  ) +
+  
+  # DifVal aldagaia (gezia)
+  geom_segment(
+    data = var_sel,
+    aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2),
+    inherit.aes = FALSE,
+    arrow = arrow(length = unit(0.25, "cm")),
+    linewidth = 1,
+    color = "black"
+  ) +
+  ggrepel::geom_text_repel(
+    data = var_sel,
+    aes(x = Dim.1, y = Dim.2, label = Aldagaia),
+    inherit.aes = FALSE,
+    size = 4,
+    fontface = "italic",
+    color = "black"
   ) +
   
   scale_color_manual(values = pal) +
@@ -175,9 +200,7 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
   labs(
     title = "Factor map",
     x = "Dim1",
-    y = "Dim2",
-    color = "cluster",
-    fill  = "cluster"
+    y = "Dim2"
   )
 
 print(p)
