@@ -31,9 +31,9 @@ library(reprex)
 library(scales)
 library(ggrepel)
 
-# ----------------------------
+
 # 1) Datuak leiru (dokumentua bilatu)
-# ----------------------------
+
 file_path <- if (exists("data_path")) {
   data_path
 } else {
@@ -42,25 +42,25 @@ file_path <- if (exists("data_path")) {
 
 a <- read.xlsx(file_path, sheetIndex = "FAMD_and_HCPC")
 
-# ----------------------------
+
 # 2) Datuak organixa (izenak GU bakotxenak)
-# ----------------------------
+
 a2 <- a[, -1]
 row.names(a2) <- a[, 1]
 
-# ----------------------------
+
 # 3) FAMD
-# ----------------------------
+
 res.famd <- FAMD(a2)
 
-# ----------------------------
+
 # 4) HCPC
-# ----------------------------
+
 c <- HCPC(res.famd, nb.clus = -1, graph = FALSE)
 
-# ----------------------------
+
 # 5) Koordenadak + cluster + GU
-# ----------------------------
+
 coord <- as.data.frame(res.famd$ind$coord[, 1:2])
 colnames(coord) <- c("Dim1", "Dim2")
 
@@ -68,9 +68,9 @@ cl <- c$data.clust
 coord$cluster <- factor(cl[rownames(coord), "clust"])
 coord$GU <- rownames(coord)
 
-# ----------------------------
+
 # 6) Kobak leiru
-# ----------------------------
+
 detect_cave <- function(x) {
   x <- as.character(x)
   case_when(
@@ -88,9 +88,9 @@ detect_cave <- function(x) {
 }
 coord$Cueva <- factor(detect_cave(coord$GU))
 
-# ----------------------------
+
 # 7) Koben zentroidiak kalkula
-# ----------------------------
+
 cent_cueva <- coord %>%
   dplyr::group_by(Cueva) %>%
   dplyr::summarise(
@@ -99,9 +99,9 @@ cent_cueva <- coord %>%
     .groups = "drop"
   )
 
-# ----------------------------
+
 # 8) GU batzuk bakarrik etiketatu (AUKERATU MODUA)
-# ----------------------------
+
 
 # (A) MODU MANUALA: hemen idatzi etiketatu nahi dituzun GU-ak
 # adibidez: gu_aukeratu <- c("Al.C.IV.49", "Etx.I.II.02", "Atr.J.II.16")
@@ -122,9 +122,8 @@ if (length(gu_aukeratu) == 0) {
   coord$label_GU <- ifelse(coord$GU %in% ext_GU, coord$GU, NA)
 }
 
-# ----------------------------
+
 # 9) Aldagaien koordenatuak (FAMD)
-# ----------------------------
 
 var_coord <- as.data.frame(res.famd$var$coord[, 1:2])
 var_coord$Aldagaia <- rownames(var_coord)
@@ -133,9 +132,8 @@ var_coord$Aldagaia <- rownames(var_coord)
 var_sel <- var_coord %>%
   dplyr::filter(Aldagaia %in% c("DifVal"))
 
-# ----------------------------
+
 # 10) Plot bakarra (GU batzuk + koben zentroidiak + Zailtasun aldagaia)
-# ----------------------------
 
 # Kolore kolore ta gustu guztiak ...
 pal <- c("#0073C2FF", "#EFC000FF", "#868686FF", "#CD534CFF")
@@ -206,3 +204,4 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
 print(p)
 
 # HON BAI AMAITXUTA!!!
+
