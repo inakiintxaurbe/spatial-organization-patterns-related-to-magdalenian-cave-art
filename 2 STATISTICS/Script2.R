@@ -1,5 +1,4 @@
-
-#                        STATS (2)
+#   STATS (2) :
 #
 #   Executes both analytical pipelines:
 #     1. Factorial Analysis of Mixed Data and Hierarchical Clustering
@@ -177,5 +176,6 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
 print(p)
 
 # HON BAI AMAITXUTA!!!
+
 
 
