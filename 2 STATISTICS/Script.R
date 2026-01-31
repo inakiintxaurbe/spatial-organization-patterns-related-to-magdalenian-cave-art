@@ -1,6 +1,5 @@
-# ======================================================
-#                        STATS
-# ======================================================
+#   STATS :
+# 
 #   Executes both analytical pipelines:
 #     1. Factorial Analysis of Mixed Data and Hierarchical Clustering (2 times)
 #     2. Statistical DATA Analysis
@@ -12,9 +11,8 @@
 #   (Université du Bordeaux)
 #   Date: 2023-08-27
 #   Copyright (C) 2024  Iñaki Intxaurbe
-# ======================================================
 
-#install packages
+#install packages ---------------------------------------------------------------------------------------------------------------------------------------------
 
 install.packages(c("FactoMineR", "factoextra", "tidyverse","xlsx","reprex"))
 library(xlsx)
