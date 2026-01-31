@@ -61,7 +61,7 @@ detect_cave <- function(x) {
   case_when(
     str_detect(x, "^AitzIV") ~ "Aitzbitarte IV",
     str_detect(x, "^AitzV")  ~ "Aitzbitarte V",
-    str_detect(x, "^Alk")    ~ "Alkerdi 1",  # Alkerdi lenago Altxerrigaz ez liateko (Al)!
+    str_detect(x, "^Alk")    ~ "Alkerdi 1",  
     str_detect(x, "^Atr")    ~ "Atxurra",
     str_detect(x, "^Ek")     ~ "Ekain",
     str_detect(x, "^Al")     ~ "Altxerri",
@@ -174,8 +174,3 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
   )
 
 print(p)
-
-# HON BAI AMAITXUTA!!!
-
-
-
