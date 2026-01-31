@@ -1,6 +1,6 @@
-# ======================================================
+
 #                        STATS (2)
-# ======================================================
+#
 #   Executes both analytical pipelines:
 #     1. Factorial Analysis of Mixed Data and Hierarchical Clustering
 #     2. Each cave centroid in the Factorial Map (1st FAMD)
@@ -12,8 +12,8 @@
 #   (Université du Bordeaux)
 #   Update Date: 2025-12-21
 #   Copyright (C) 2025  Iñaki Intxaurbe
-# ======================================================
-# paketiak instala ------------------------------------------
+
+# Install packages (if necessary) ----------------------------------------------------------------------------------------------------------------------------------------------
 pkgs <- c(
   "xlsx", "FactoMineR", "factoextra", "ggplot2", "tidyverse",
   "reprex", "scales", "ggrepel"
@@ -32,34 +32,21 @@ library(scales)
 library(ggrepel)
 
 
-# 1) Datuak leiru (dokumentua bilatu)
-
-file_path <- if (exists("data_path")) {
-  data_path
-} else {
-  file.path(getwd(), "Table_DATA.xlsx")
-}
-
+file_path <- file.path(getwd(), "Table_DATA.xlsx")
 a <- read.xlsx(file_path, sheetIndex = "FAMD_and_HCPC")
-
-
-# 2) Datuak organixa (izenak GU bakotxenak)
 
 a2 <- a[, -1]
 row.names(a2) <- a[, 1]
 
-
-# 3) FAMD
+# FAMD ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 res.famd <- FAMD(a2)
 
-
-# 4) HCPC
+# HCPC ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 c <- HCPC(res.famd, nb.clus = -1, graph = FALSE)
 
-
-# 5) Koordenadak + cluster + GU
+# Coordinates -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 coord <- as.data.frame(res.famd$ind$coord[, 1:2])
 colnames(coord) <- c("Dim1", "Dim2")
@@ -68,8 +55,7 @@ cl <- c$data.clust
 coord$cluster <- factor(cl[rownames(coord), "clust"])
 coord$GU <- rownames(coord)
 
-
-# 6) Kobak leiru
+# Detect caves and colculate centroids -----------------------------------------------------------------------------------------------------------------------------
 
 detect_cave <- function(x) {
   x <- as.character(x)
@@ -88,9 +74,6 @@ detect_cave <- function(x) {
 }
 coord$Cueva <- factor(detect_cave(coord$GU))
 
-
-# 7) Koben zentroidiak kalkula
-
 cent_cueva <- coord %>%
   dplyr::group_by(Cueva) %>%
   dplyr::summarise(
@@ -99,18 +82,18 @@ cent_cueva <- coord %>%
     .groups = "drop"
   )
 
+# Select GUs (2 modes) -------------------------------------------------------------------------------------------------------------------------------------------
 
-# 8) GU batzuk bakarrik etiketatu (AUKERATU MODUA)
+# V (A) MANUAL MODE: Whrite the GU of interest -------------------------------------------------------------------------------------------------------------------
 
+gu_aukeratu <- c()  # Change here !!!. e.g.: gu_aukeratu <- c("Al.C.IV.49", "Etx.I.II.02", "Atr.J.II.16")
 
-# (A) MODU MANUALA: hemen idatzi etiketatu nahi dituzun GU-ak
-# adibidez: gu_aukeratu <- c("Al.C.IV.49", "Etx.I.II.02", "Atr.J.II.16")
-gu_aukeratu <- c()  
+# Ʌ (A) MANUAL MODE: Whrite the GU of interest -------------------------------------------------------------------------------------------------------------------
 
 coord$label_GU <- ifelse(coord$GU %in% gu_aukeratu, coord$GU, NA)
 
-# (B) MODU AUTOMATIKOA (aukera): muturreko GU-ak hautatu (n = 3 dim bakoitzean)
-# nahi baduzu, goiko (A) utzi hutsik eta hau aktibatu:
+# V (B) AUTOMATIC MODE: select extreme GU-s (n = 3 per dim) ------------------------------------------------------------------------------------------------------
+
 if (length(gu_aukeratu) == 0) {
   n_ext <- 3
   ext_GU <- unique(c(
@@ -122,31 +105,23 @@ if (length(gu_aukeratu) == 0) {
   coord$label_GU <- ifelse(coord$GU %in% ext_GU, coord$GU, NA)
 }
 
-
-# 9) Aldagaien koordenatuak (FAMD)
+# Coordinates of variables (and PLOT) ----------------------------------------------------------------------------------------------------------------------------
 
 var_coord <- as.data.frame(res.famd$var$coord[, 1:2])
 var_coord$Aldagaia <- rownames(var_coord)
 
-# Guk interesatzen zaizkigunak bakarrik
 var_sel <- var_coord %>%
   dplyr::filter(Aldagaia %in% c("DifVal"))
 
-
-# 10) Plot bakarra (GU batzuk + koben zentroidiak + Zailtasun aldagaia)
-
-# Kolore kolore ta gustu guztiak ...
 pal <- c("#0073C2FF", "#EFC000FF", "#868686FF", "#CD534CFF")
 
 p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
   geom_point(size = 1.2, alpha = 0.6) +
-  
-  # 2 sigmako elipseak
+    
   stat_ellipse(aes(fill = cluster), geom = "polygon",
                level = 0.9545, alpha = 0.12, color = NA) +
   stat_ellipse(level = 0.9545, linewidth = 0.6) +
   
-  # GU batzuk bakarrik
   ggrepel::geom_text_repel(
     aes(label = label_GU),
     size = 3,
@@ -154,7 +129,6 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
     show.legend = FALSE
   ) +
   
-  # koben zentroidiak
   geom_point(
     data = cent_cueva,
     aes(Dim1, Dim2),
@@ -174,7 +148,6 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
     color = "black"
   ) +
   
-  # DifVal aldagaia (gezia)
   geom_segment(
     data = var_sel,
     aes(x = 0, y = 0, xend = Dim.1, yend = Dim.2),
@@ -204,4 +177,5 @@ p <- ggplot(coord, aes(Dim1, Dim2, color = cluster)) +
 print(p)
 
 # HON BAI AMAITXUTA!!!
+
 
