@@ -1,20 +1,18 @@
-#   STATS :
+#   STATS
 # 
-#   Executes both analytical pipelines:
-#     1. Factorial Analysis of Mixed Data and Hierarchical Clustering (2 times)
-#     2. Statistical DATA Analysis
-#
 #   Author: Iñaki Intxaurbe Alberdi 
-#   Department of Graphic Design and Engineering Projects
-#   (Universidad del País Vasco/Euskal Herriko Unibertsitatea)
-#   PACEA UMR 5199
-#   (Université du Bordeaux)
-#   Date: 2023-08-27
 #   Copyright (C) 2024  Iñaki Intxaurbe
+#
+#   SPDX-License-Identifier: AGPL-3.0 (citation mandatory)
 
-#install packages ---------------------------------------------------------------------------------------------------------------------------------------------
+# Install packages and organise framework ----------------------------------------------------------------------------------------------------------------------------------------------
 
-install.packages(c("FactoMineR", "factoextra", "tidyverse","xlsx","reprex"))
+pkgs <- c(
+  "xlsx", "FactoMineR", "factoextra", "ggplot2",
+  "tidyverse", "reprex", "scales", "ggrepel"
+)
+to_install <- pkgs[!pkgs %in% rownames(installed.packages())]
+if (length(to_install) > 0) install.packages(to_install)
 library(xlsx)
 library(FactoMineR)
 library(factoextra)
